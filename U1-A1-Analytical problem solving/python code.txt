@@ -1,0 +1,337 @@
+# ==========================================================
+# ARTIFICIAL INTELLIGENCE - ASSESSMENT 1
+# Python Programs for Questions 1 to 5
+# Name : M Pradeepthi 
+# Reg No : 192472387
+# ==========================================================
+
+# ==========================================================
+# QUESTION 1 - WATER JUG PROBLEM USING BFS
+# ==========================================================
+# Water Jug Problem
+
+jug1_capacity = 4
+jug2_capacity = 3
+
+jug1 = 0
+jug2 = 0
+
+goal = 2
+
+while jug1 != goal:
+
+    # Fill Jug 2
+    if jug2 == 0:
+        jug2 = jug2_capacity
+        print("Fill Jug2:", (jug1, jug2))
+
+    # Pour Jug2 into Jug1
+    transfer = min(jug2, jug1_capacity - jug1)
+    jug1 += transfer
+    jug2 -= transfer
+    print("Pour Jug2 -> Jug1:", (jug1, jug2))
+
+    # Empty Jug1 if full
+    if jug1 == jug1_capacity:
+        jug1 = 0
+        print("Empty Jug1:", (jug1, jug2))
+
+print("\nGoal Achieved!")
+print("Final State:", (jug1, jug2))
+
+           
+
+
+# ==========================================================
+# QUESTION 2 - MARS ROVER AGENT
+# ==========================================================
+# Mars Rover Intelligent Agent
+
+print("========== MARS ROVER INTELLIGENT AGENT ==========")
+
+# Performance Measure
+score = 0
+rocks = 0
+soil = 0
+obstacles = 0
+
+# Number of locations to explore
+steps = int(input("Enter number of locations to explore: "))
+
+for i in range(1, steps + 1):
+
+    print("\nLocation", i)
+    print("Possible Percepts: Rock, Soil, Obstacle, Empty")
+
+    percept = input("Enter what the rover detects: ").lower()
+
+    # Decision Making
+    if percept == "rock":
+        print("\nPercept  : Rock detected")
+        print("Action   : Analyze the rock")
+        print("Action   : Collect rock sample")
+        print("Action   : Send rock composition data to Earth")
+        rocks += 1
+        score += 10
+
+    elif percept == "soil":
+        print("\nPercept  : Soil detected")
+        print("Action   : Analyze the soil")
+        print("Action   : Collect soil sample")
+        print("Action   : Send soil analysis to Earth")
+        soil += 1
+        score += 8
+
+    elif percept == "obstacle":
+        print("\nPercept  : Obstacle detected")
+        print("Action   : Stop movement")
+        print("Action   : Change direction")
+        print("Action   : Continue safely")
+        obstacles += 1
+        score += 5
+
+    elif percept == "empty":
+        print("\nPercept  : Empty surface")
+        print("Action   : Move Forward")
+        print("Action   : Continue Exploration")
+        score += 2
+
+    else:
+        print("\nInvalid percept entered.")
+        print("No action performed.")
+
+# Mission Summary
+print("\n========== MISSION SUMMARY ==========")
+
+print("Rock Samples Collected :", rocks)
+print("Soil Samples Collected :", soil)
+print("Obstacles Avoided      :", obstacles)
+print("Performance Score      :", score)
+
+print("\nMission Completed Successfully.")
+
+
+
+# ==========================================================
+# QUESTION 3 - 8 QUEENS USING BACKTRACKING
+# ==========================================================
+# 8 Queens Problem using Backtracking
+
+N = 8
+
+board = [[0 for i in range(N)] for j in range(N)]
+
+def isSafe(board, row, col):
+
+    # Check left side of current row
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
+
+    # Check upper left diagonal
+    i = row
+    j = col
+    while i >= 0 and j >= 0:
+        if board[i][j] == 1:
+            return False
+        i -= 1
+        j -= 1
+
+    # Check lower left diagonal
+    i = row
+    j = col
+    while i < N and j >= 0:
+        if board[i][j] == 1:
+            return False
+        i += 1
+        j -= 1
+
+    return True
+
+
+def solve(board, col):
+
+    # All queens are placed
+    if col >= N:
+        return True
+
+    # Try placing queen in every row
+    for row in range(N):
+
+        if isSafe(board, row, col):
+
+            board[row][col] = 1
+
+            if solve(board, col + 1):
+                return True
+
+            # Backtracking
+            board[row][col] = 0
+
+    return False
+
+
+if solve(board, 0):
+
+    print("Solution Found:\n")
+
+    for row in board:
+        print(row)
+
+else:
+    print("Solution does not exist.")
+
+    
+
+
+# ==========================================================
+# QUESTION 4 - OLA CAB BOOKING
+# ==========================================================
+# OLA CAB BOOKING SYSTEM - Goal Based Intelligent Agent
+
+print("========== OLA CAB BOOKING SYSTEM ==========")
+
+# User Inputs
+source = input("Enter Pickup Location: ")
+destination = input("Enter Destination: ")
+
+print("\nSelect your Priority")
+print("1. Lowest Fare")
+print("2. Highest Comfort")
+print("3. Minimum Waiting Time")
+
+choice = int(input("Enter your choice (1-3): "))
+
+# Cab Details
+cabs = [
+    {"name": "Mini", "fare": 150, "comfort": 2, "waiting": 8, "available": "Yes"},
+    {"name": "Sedan", "fare": 250, "comfort": 4, "waiting": 5, "available": "Yes"},
+    {"name": "Prime", "fare": 350, "comfort": 5, "waiting": 3, "available": "No"},
+    {"name": "SUV", "fare": 450, "comfort": 5, "waiting": 6, "available": "Yes"}
+]
+
+print("\nAvailable Cab Details")
+print("---------------------------------------------")
+print("Cab\tFare\tComfort\tWaiting\tAvailable")
+
+for cab in cabs:
+    print(cab["name"], "\t", cab["fare"], "\t", cab["comfort"], "\t\t", cab["waiting"], "min\t", cab["available"])
+
+bestCab = None
+
+# Goal-Based Decision Making
+
+if choice == 1:
+    minFare = 99999
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["fare"] < minFare:
+            minFare = cab["fare"]
+            bestCab = cab
+
+elif choice == 2:
+    maxComfort = -1
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["comfort"] > maxComfort:
+            maxComfort = cab["comfort"]
+            bestCab = cab
+
+elif choice == 3:
+    minWait = 99999
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["waiting"] < minWait:
+            minWait = cab["waiting"]
+            bestCab = cab
+
+else:
+    print("Invalid Choice")
+
+# Booking
+
+if bestCab != None:
+
+    print("\n========== BEST CAB FOUND ==========")
+
+    print("Cab Name      :", bestCab["name"])
+    print("Fare          : Rs.", bestCab["fare"])
+    print("Comfort Level :", bestCab["comfort"])
+    print("Waiting Time  :", bestCab["waiting"], "minutes")
+
+    confirm = input("\nDo you want to book this cab? (yes/no): ")
+
+    if confirm.lower() == "yes":
+        print("\nCab Booked Successfully")
+        print("Pickup      :", source)
+        print("Destination :", destination)
+        print("Driver will arrive in", bestCab["waiting"], "minutes.")
+        print("Have a Safe Journey!")
+
+    else:
+        print("\nBooking Cancelled")
+
+else:
+    print("No cab available.")
+
+
+
+
+# ==========================================================
+# QUESTION 5 - UNIFORM COST SEARCH
+# ==========================================================
+import heapq
+
+# Graph representing warehouses and travel costs
+graph = {
+    'A': [('B', 2), ('C', 4)],
+    'B': [('D', 7), ('E', 3)],
+    'C': [('F', 5)],
+    'D': [('G', 1)],
+    'E': [('G', 6)],
+    'F': [('G', 2)],
+    'G': []
+}
+
+# Uniform Cost Search Function
+def uniform_cost_search(graph, start, goal):
+
+    # Priority Queue (Cost, Current Node, Path)
+    queue = [(0, start, [start])]
+
+    visited = set()
+
+    while queue:
+
+        cost, node, path = heapq.heappop(queue)
+
+        if node in visited:
+            continue
+
+        visited.add(node)
+
+        if node == goal:
+            return cost, path
+
+        for neighbor, edge_cost in graph[node]:
+            if neighbor not in visited:
+                heapq.heappush(queue,
+                               (cost + edge_cost,
+                                neighbor,
+                                path + [neighbor]))
+
+    return None
+
+
+# User Input
+start = input("Enter Starting Warehouse: ").upper()
+goal = input("Enter Destination Warehouse: ").upper()
+
+result = uniform_cost_search(graph, start, goal)
+
+if result:
+    total_cost, shortest_path = result
+    print("\nOptimal Path :", " -> ".join(shortest_path))
+    print("Minimum Cost :", total_cost)
+else:
+    print("No path found.")
