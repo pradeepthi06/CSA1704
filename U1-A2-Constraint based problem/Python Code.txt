@@ -1,0 +1,283 @@
+# ============================================================
+# ARTIFICIAL INTELLIGENCE ASSESSMENT
+# Question 1 - Hospital Doctor Scheduling using Backtracking
+# Question 2 - Robot Navigation using Breadth First Search
+# Question 3 - Rescue Robot using Uniform Cost Search
+# ============================================================
+
+from collections import deque
+import heapq
+
+# ============================================================
+# QUESTION 1
+# Hospital Doctor Scheduling using Backtracking Search
+# ============================================================
+# List of doctors
+doctors = ["D1", "D2", "D3"]
+
+# List of available shifts
+shifts = ["Morning", "Afternoon", "Night"]
+
+# Dictionary to store final assignment
+assignment = {}
+
+# ---------------------------------------
+# Function to check whether assignment is valid
+# ---------------------------------------
+
+def is_safe(doctor, shift):
+
+    # Constraint 1:
+    # One shift should not be assigned twice
+    if shift in assignment.values():
+        return False
+
+    # Constraint 2:
+    # D1 cannot work Night shift
+    if doctor == "D1" and shift == "Night":
+        return False
+
+    # Constraint 3:
+    # D2 cannot work Morning shift
+    if doctor == "D2" and shift == "Morning":
+        return False
+
+    return True
+
+
+# ---------------------------------------
+# Backtracking Function
+# ---------------------------------------
+
+def backtrack(index):
+
+    # Base condition
+    if index == len(doctors):
+        return True
+
+    # Current doctor
+    doctor = doctors[index]
+
+    # Try every shift
+    for shift in shifts:
+
+        print(f"Trying {doctor} -> {shift}")
+
+        # Check constraints
+        if is_safe(doctor, shift):
+
+            # Assign shift
+            assignment[doctor] = shift
+
+            print("Assigned:", assignment)
+
+            # Recursive call
+            if backtrack(index + 1):
+                return True
+
+            # Backtracking
+            print("Backtracking from", doctor)
+
+            del assignment[doctor]
+
+    return False
+
+
+# ---------------------------------------
+# Driver Code
+# ---------------------------------------
+
+if backtrack(0):
+
+    print("\nValid Schedule")
+
+    for doctor, shift in assignment.items():
+        print(doctor, "->", shift)
+
+else:
+    print("No valid schedule found.")
+
+
+
+
+
+# ============================================================
+# QUESTION 2
+# Robot Navigation using Breadth First Search
+# ============================================================
+from collections import deque
+
+# 5x5 Grid
+grid = [
+    ['S', '.', '.', '#', '.'],
+    ['.', '#', '.', '#', '.'],
+    ['.', '#', '.', '.', '.'],
+    ['.', '.', '#', '#', '.'],
+    ['#', '.', '.', 'G', '.']
+]
+
+rows = 5
+cols = 5
+
+# Find Start and Goal positions
+for i in range(rows):
+    for j in range(cols):
+        if grid[i][j] == 'S':
+            start = (i, j)
+        elif grid[i][j] == 'G':
+            goal = (i, j)
+
+# Possible movements
+directions = [
+    (-1, 0),  # Up
+    (1, 0),   # Down
+    (0, -1),  # Left
+    (0, 1)    # Right
+]
+
+# BFS Function
+def bfs(start, goal):
+
+    queue = deque()
+    queue.append((start, [start]))
+
+    visited = set()
+    visited.add(start)
+
+    while queue:
+
+        current, path = queue.popleft()
+
+        print("Current Node:", current)
+        print("Queue:", list(queue))
+
+        if current == goal:
+            return path
+
+        for dx, dy in directions:
+
+            x = current[0] + dx
+            y = current[1] + dy
+
+            if 0 <= x < rows and 0 <= y < cols:
+
+                if grid[x][y] != '#' and (x, y) not in visited:
+
+                    visited.add((x, y))
+                    queue.append(((x, y), path + [(x, y)]))
+
+    return None
+
+
+# Driver Code
+path = bfs(start, goal)
+
+if path:
+
+    print("\nShortest Path:")
+    print(path)
+
+    print("\nTotal Cost =", len(path) - 1)
+
+else:
+    print("No Path Found")
+
+
+
+# ============================================================
+# QUESTION 3
+# Rescue Robot using Uniform Cost Search
+# ============================================================
+import heapq
+
+# 5x5 Grid
+grid = [
+    ['S', '.', '.', '#', '.'],
+    ['.', 'R', '.', '#', '.'],
+    ['.', '#', '.', '.', '.'],
+    ['.', '.', 'R', '#', '.'],
+    ['#', '.', '.', 'G', '.']
+]
+
+rows = 5
+cols = 5
+
+# Find Start and Goal
+for i in range(rows):
+    for j in range(cols):
+        if grid[i][j] == 'S':
+            start = (i, j)
+        elif grid[i][j] == 'G':
+            goal = (i, j)
+
+# Possible moves
+directions = [
+    (-1, 0),  # Up
+    (1, 0),   # Down
+    (0, -1),  # Left
+    (0, 1)    # Right
+]
+
+# Uniform Cost Search Function
+def uniform_cost_search(start, goal):
+
+    # Priority Queue
+    pq = []
+
+    # (cost, current_position, path)
+    heapq.heappush(pq, (0, start, [start]))
+
+    visited = {}
+
+    while pq:
+
+        cost, current, path = heapq.heappop(pq)
+
+        print("Current Node:", current)
+        print("Current Cost:", cost)
+
+        if current == goal:
+            return path, cost
+
+        if current in visited and visited[current] <= cost:
+            continue
+
+        visited[current] = cost
+
+        for dx, dy in directions:
+
+            x = current[0] + dx
+            y = current[1] + dy
+
+            if 0 <= x < rows and 0 <= y < cols:
+
+                if grid[x][y] != '#':
+
+                    # Normal move cost
+                    new_cost = cost + 1
+
+                    # Extra cost for risky zone
+                    if grid[x][y] == 'R':
+                        new_cost += 2
+
+                    heapq.heappush(
+                        pq,
+                        (new_cost, (x, y), path + [(x, y)])
+                    )
+
+    return None, None
+
+
+# Driver Code
+path, cost = uniform_cost_search(start, goal)
+
+if path:
+    print("\nMinimum Cost Path:")
+    print(path)
+    print("Total Cost =", cost)
+else:
+    print("No Path Found")
+
+
+
+print("\n========== PROGRAM COMPLETED ==========")
